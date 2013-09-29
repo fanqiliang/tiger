@@ -29,6 +29,7 @@ public class Token
     TOKEN_LENGTH, // "length"
     TOKEN_LPAREN, // "("
     TOKEN_LT, // "<"
+    TOKEN_RT, // '>' add...........
     TOKEN_MAIN, // "main"
     TOKEN_NEW, // "new"
     TOKEN_NOT, // "!"
@@ -62,6 +63,10 @@ public class Token
 
   // Some tokens don't come with lexeme but 
   // others do.
+  
+  public Token() {
+	  
+  }
   public Token(Kind kind, Integer lineNum)
   {
     this.kind = kind;
