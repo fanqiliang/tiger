@@ -22,42 +22,64 @@
 
 #include<stdio.h>
 #include<stdlib.h>
+#include"linktable.h"
 
 /* Record of every student */
 typedef struct Student
 {
     int id;
     int name;
-    struct Student * next;
 }tStudent;
 
 tStudent * pHead = NULL;
 
+void showInfo();
+
 int main()
 {
-    tStudent * pStudent = NULL;
+    tStudent     * pStudent = NULL;
+    tLinkTable * pLinkTable = NULL;
+    tLinkTableNode *pNode = NULL; 
     int i = 0;
-    
-    /* insert 1000 students */
-    for (i=0;i<1000;i++)
+    int n = 0;
+    int num = 0;
+    while(n == 0)
     {
-        pStudent        = (tStudent *)malloc(sizeof(tStudent));
-        pStudent->id    = i;
-        pStudent->name  = i;
-        pStudent->next  = pHead;
-        pHead           = pStudent;
-    }
-    
-    /* select 1000 times by student id */
-    for (i=0;i<1000;i++)
-    {
-        /* random() return long int value,0 to (2^31 - 1) */
-        int id = random() % 1000; 
-        pStudent = pHead;
-        while(pStudent->id != id)
+        showInfo();
+        printf("please input the right number:");
+        scanf("%d",&n);
+        switch(n)
         {
-            pStudent = pStudent->next;
+            case 0:
+                pLinkTable = CreateLinkTable();
+                printf("please input the 'num' of the students:");
+                scanf("%d", &num);
+                /* insert n students */
+                for (i = 0; i < n;i++)
+                {
+                    pNode  = (tLinkTableNode *)malloc(sizeof(tLinkTableNode));
+                    pStudent        = (tStudent *)malloc(sizeof(tStudent));
+                    pStudent->id    = i;
+                    pStudent->name  = i;
+                    pNode->data = pStudent;
+                    if (!(SUCCESS == AddLinkTableNode(pLinkTable, pNode)))
+                    {
+                        printf("insert is FAILURE!!!!!");
+                        break;
+                    }
+                }
+                break;
+            default :
+                return 1;
         }
-        printf("find student %d\n",pStudent->id);
-    }    
+    }
+}
+
+void showInfo()
+{
+    printf("            -----------------------------\n");
+    printf("              student management system\n");
+    printf("            -----------------------------\n");
+    printf("                0.insert n students\n");
+    return;
 }
