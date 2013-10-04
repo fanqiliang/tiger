@@ -146,7 +146,7 @@ tLinkTableNode * SearchLinkTableNode(tLinkTable *pLinkTable, int Conditon(tLinkT
 		return NULL;
     }
     tLinkTableNode * pNode = pLinkTable->pHead;
-	while(pNode != pLinkTable->pTail)
+	while(pNode != NULL)
     {    
 		if(Conditon(pNode) == SUCCESS)
         {
