@@ -35,7 +35,9 @@ tStudent * pHead = NULL;
 tStudent     * pStudent = NULL;
 tLinkTable * pLinkTable = NULL;
 tLinkTableNode *pNode = NULL;
-
+tStudent * fStudent = NULL;
+tLinkTable * fLinkTable = NULL;
+tLinkTableNode * fNode = NULL;
 int m = 0; //accept from terminal
 
 void showInfo();
@@ -45,9 +47,10 @@ int main()
 {
     int i = 0;
     int flag = 1; //flag for first while
-    static int n_num = 0; //as student's id
+    static int n_id = 0; //as student's id
+    static int n_name = 0; //as student's name;
     int n = 0; //flag for switch
-
+    int flag1 = 1;
     while (flag == 1)
     {
         showInfo();
@@ -59,8 +62,8 @@ int main()
             case 0:
                 pLinkTable = CreateLinkTable();
                 printf("please input the 'n_num' of the students:");
-                scanf("%d", &n_num);
-                for (i = 1; i <= n_num; i++)
+                scanf("%d", &n_id);
+                for (i = 1; i <= n_id; i++)
                 {
                     pNode  = (tLinkTableNode *)malloc(sizeof(tLinkTableNode));
                     pStudent        = (tStudent *)malloc(sizeof(tStudent));
@@ -73,18 +76,21 @@ int main()
                         break;
                     }
                 }
-                printf("insert the %d students\n", n_num);
+                n_name = n_id;
+                printf("insert the %d students\n", n_id);
                 break;
             case 1:
                 pNode  = (tLinkTableNode *)malloc(sizeof(tLinkTableNode));
                 pStudent        = (tStudent *)malloc(sizeof(tStudent));
-                pStudent->id    = n_num++;
-                pStudent->name  = n_num++;
+                pStudent->id    = ++n_id;
+                pStudent->name  = ++n_name;
                 pNode->data = pStudent;
                 if (!(SUCCESS == AddLinkTableNode(pLinkTable, pNode)))
                 {
                     printf("insert is FAILURE!!!!!\n");
+                    break;
                 }
+                printf("add a student SUCCESS!!!\n");
                 break;
             case 2:
                 pNode = GetLinkTableHead(pLinkTable);
@@ -92,17 +98,27 @@ int main()
 	            scanf("%d", &m);
                 while (1)
                 {
+                    flag1 = 1;
                     pStudent = (tStudent *)pNode->data;
                     if (pStudent->id == m)
                     {
-                        free(pNode);
-                        free(pStudent);
-                        printf("delete SUCCESS!!!\n");
-                        break;
+                        if (DelLinkTableNode(pLinkTable, pNode) == SUCCESS)
+                        {
+                            fStudent = pStudent;
+                            fNode = pNode;
+                            free(fStudent);
+                            free(fNode);
+                            flag1 = 0;
+                            printf("delete SUCCESS!!!\n");
+                            break;
+                        }
                     }
                     pNode = GetNextLinkTableNode(pLinkTable, pNode);
                 }
-                printf("the student does not exist !!!\n");
+                if (flag1 == 1)
+                {
+                    printf("the student does not exist !!!\n");
+                }
                 break;
             case 3:
                 pNode = GetLinkTableHead(pLinkTable);
@@ -132,6 +148,16 @@ int main()
                 printf("the student's name is : %d\n", pStudent->name);
                 break;
             case 5:
+                pNode = GetLinkTableHead(pLinkTable);
+                while (pNode != NULL)
+                {
+                    pStudent = (tStudent *)pNode->data;
+                    printf("the student id and name is: %d and %d\n", pStudent->id,pStudent->name);
+                    //printf("the student name is %d\n", pStudent->name);
+                    pNode = GetNextLinkTableNode(pLinkTable, pNode);
+                }
+                break;
+            case 6:
                 flag = 0;
                 break;
             default :
@@ -150,7 +176,8 @@ void showInfo()
     printf("                2.delete one student\n");
     printf("                3.change one student information\n");
     printf("                4.search a student\n");
-    printf("                5.exit\n");
+    printf("                5.show all students information\n");
+    printf("                6.exit\n");
     return;
 }
 
