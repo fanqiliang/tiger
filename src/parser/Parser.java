@@ -198,9 +198,65 @@ public class Parser {
 	// -> id = Exp ;
 	// -> id [ Exp ]= Exp ;
 	private void parseStatement() {
+		switch (current.kind) {
+		case TOKEN_LBRACE:
+			advance();
+			parseStatements();
+			eatToken(Kind.TOKEN_RBRACE);
+			return;
+		case TOKEN_IF:
+			advance();
+			eatToken(Kind.TOKEN_LPAREN);
+			parseExp();
+			eatToken(Kind.TOKEN_RPAREN);
+			parseStatement();
+			advance();
+			parseStatement();
+			return;
+		case TOKEN_WHILE:
+			advance();
+			eatToken(Kind.TOKEN_LPAREN);
+			parseExp();
+			eatToken(Kind.TOKEN_RPAREN);
+			parseStatement();
+			return;
+		case TOKEN_SYSTEM:
+			advance();
+			eatToken(Kind.TOKEN_DOT);
+			eatToken(Kind.TOKEN_OUT);
+			eatToken(Kind.TOKEN_DOT);
+			eatToken(Kind.TOKEN_PRINTLN);
+			eatToken(Kind.TOKEN_LPAREN);
+			parseExp();
+			eatToken(Kind.TOKEN_RPAREN);
+			return;
+		case TOKEN_ID:
+			advance();
+			switch (current.kind) {
+			case TOKEN_ASSIGN:
+				advance();
+				parseExp();
+				eatToken(Kind.TOKEN_SEMI);
+				return;
+			case TOKEN_LBRACK:
+				advance();
+				eatToken(Kind.TOKEN_LBRACK);
+				parseExp();
+				eatToken(Kind.TOKEN_RBRACK);
+				eatToken(Kind.TOKEN_ASSIGN);
+				parseExp();
+				eatToken(Kind.TOKEN_SEMI);
+				return;
+			default:
+				error();
+				return;
+			}
+		default:
+			error();
+			return;
+		}
 		// Lab1. Exercise 4: Fill in the missing code
 		// to parse a statement.
-		new util.Todo();
 	}
 
 	// Statements -> Statement Statements
@@ -221,9 +277,25 @@ public class Parser {
 	// -> int
 	// -> id
 	private void parseType() {
+		switch (current.kind) {
+		case TOKEN_ID:
+			advance();
+			return;
+		case TOKEN_BOOLEAN:
+			advance();
+			return;
+		case TOKEN_INT:
+			advance();
+			if (current.kind == Kind.TOKEN_LBRACK) {
+				eatToken(Kind.TOKEN_RBRACK);
+			}
+			return;
+		default:
+			error();
+			return;
+		}
 		// Lab1. Exercise 4: Fill in the missing code
 		// to parse a type.
-		new util.Todo();
 	}
 
 	// VarDecl -> Type id ;
@@ -268,9 +340,21 @@ public class Parser {
 	// Method -> public Type id ( FormalList )
 	// { VarDecl* Statement* return Exp ;}
 	private void parseMethod() {
+		eatToken(Kind.TOKEN_PUBLIC);
+		parseType();
+		eatToken(Kind.TOKEN_ID);
+		eatToken(Kind.TOKEN_LPAREN);
+		parseFormalList();
+		eatToken(Kind.TOKEN_RPAREN);
+		eatToken(Kind.TOKEN_LBRACE);
+		parseVarDecls();
+		parseStatements();
+		eatToken(Kind.TOKEN_RETURN);
+		parseExp();
+		eatToken(Kind.TOKEN_RBRACE);
 		// Lab1. Exercise 4: Fill in the missing code
 		// to parse a method.
-		new util.Todo();
+		//new util.Todo();
 		return;
 	}
 
@@ -316,10 +400,27 @@ public class Parser {
 	// }
 	// }
 	private void parseMainClass() {
+		eatToken(Kind.TOKEN_CLASS);
+		eatToken(Kind.TOKEN_ID);
+		eatToken(Kind.TOKEN_RBRACE);
+		eatToken(Kind.TOKEN_PUBLIC);
+		eatToken(Kind.TOKEN_STATIC);
+		eatToken(Kind.TOKEN_VOID);
+		eatToken(Kind.TOKEN_MAIN);
+		eatToken(Kind.TOKEN_LPAREN);
+		eatToken(Kind.TOKEN_STRING);
+		eatToken(Kind.TOKEN_LBRACK);
+		eatToken(Kind.TOKEN_RBRACK);
+		eatToken(Kind.TOKEN_ID);
+		eatToken(Kind.TOKEN_RPAREN);
+		eatToken(Kind.TOKEN_LBRACE);
+		parseStatement();
+		eatToken(Kind.TOKEN_RBRACE);
 		// Lab1. Exercise 4: Fill in the missing code
 		// to parse a main class as described by the
 		// grammar above.
-		new util.Todo();
+		//new util.Todo();
+		return;
 	}
 
 	// Program -> MainClass ClassDecl*
