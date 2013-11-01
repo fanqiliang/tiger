@@ -49,7 +49,7 @@ public class Lexer {
 			}
 			c = this.fstream.read();
 		}
-		
+
 		if (-1 == c)
 			return new Token(Kind.TOKEN_EOF, token.lineNum);
 		if (c >= '0' && c <= '9') {
@@ -61,10 +61,11 @@ public class Lexer {
 					token.lexeme += (char) c;
 				} else {
 					this.fstream.reset();
-					return new Token(Kind.TOKEN_NUM, token.lineNum, token.lexeme);
+					return new Token(Kind.TOKEN_NUM, token.lineNum,
+							token.lexeme);
 				}
 			}
-			
+
 		}
 		if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c == '_')) {
 			token.lexeme += (char) c;
@@ -97,13 +98,13 @@ public class Lexer {
 						return new Token(Kind.TOKEN_EXTENDS, token.lineNum);
 					}
 				}
-			    if (!(c >= 'A' && c <= 'Z') && !(c >= 'a' && c <= 'z')
+				if (!(c >= 'A' && c <= 'Z') && !(c >= 'a' && c <= 'z')
 						&& !(c == '_') && !(c >= '0' && c <= '9')) {
-			    	c = this.fstream.read();
-			    } else {
-			    	token.lexeme += (char) c;
-			    }
-			    return returnback(c);
+					this.fstream.reset();
+				} else {
+					token.lexeme += (char) c;
+				}
+				return returnback(c);
 			case 'f':
 				str = "alse";
 				if (Comparing(str, c)) {
@@ -112,7 +113,7 @@ public class Lexer {
 				return returnback(c);
 			case 'i':
 				this.fstream.mark(1);
-				c = this.fstream.read();			
+				c = this.fstream.read();
 				if (c == 'n') {
 					token.lexeme += (char) c;
 					str = "t";
@@ -121,15 +122,26 @@ public class Lexer {
 					}
 				} else if (c == 'f') {
 					token.lexeme += (char) c;
-					return new Token(Kind.TOKEN_IF, token.lineNum);
+					c = this.fstream.read();
+					if (!(c >= 'A' && c <= 'Z') && !(c >= 'a' && c <= 'z')
+							&& !(c == '_') && !(c >= '0' && c <= '9')) {
+						this.fstream.reset();
+						c = this.fstream.read();
+						return new Token(Kind.TOKEN_IF, token.lineNum);
+						
+					} else {
+						// this.fstream.reset();
+						token.lexeme += (char) c;
+						return returnback(c);
+					}
 				}
-			    if (!(c >= 'A' && c <= 'Z') && !(c >= 'a' && c <= 'z')
+				if (!(c >= 'A' && c <= 'Z') && !(c >= 'a' && c <= 'z')
 						&& !(c == '_') && !(c >= '0' && c <= '9')) {
-			    	this.fstream.reset();
-			    } else {
-			    	token.lexeme += (char) c;
-			    }
-			    return returnback(c);
+					this.fstream.reset();
+				} else {
+					token.lexeme += (char) c;
+				}
+				return returnback(c);
 			case 'l':
 				str = "ength";
 				if (Comparing(str, c)) {
@@ -171,11 +183,11 @@ public class Lexer {
 					}
 				}
 				if (!(c >= 'A' && c <= 'Z') && !(c >= 'a' && c <= 'z')
-							&& !(c == '_') && !(c >= '0' && c <= '9')) {
-				    	this.fstream.reset();
-				    } else {
-				    	token.lexeme += (char) c;
-				    }
+						&& !(c == '_') && !(c >= '0' && c <= '9')) {
+					this.fstream.reset();
+				} else {
+					token.lexeme += (char) c;
+				}
 				return returnback(c);
 			case 'r':
 				str = "eturn";
@@ -192,7 +204,7 @@ public class Lexer {
 			case 'S':
 				this.fstream.mark(1);
 				c = this.fstream.read();
-				
+
 				if (c == 't') {
 					token.lexeme += (char) c;
 					str = "ring";
@@ -207,16 +219,16 @@ public class Lexer {
 					}
 				}
 				if (!(c >= 'A' && c <= 'Z') && !(c >= 'a' && c <= 'z')
-							&& !(c == '_') && !(c >= '0' && c <= '9')) {
-				    	this.fstream.reset();
-				    } else {
-				    	token.lexeme += (char) c;
-				    }
+						&& !(c == '_') && !(c >= '0' && c <= '9')) {
+					this.fstream.reset();
+				} else {
+					token.lexeme += (char) c;
+				}
 				return returnback(c);
 			case 't':
 				this.fstream.mark(1);
 				c = this.fstream.read();
-				
+
 				if (c == 'h') {
 					token.lexeme += (char) c;
 					str = "is";
@@ -232,10 +244,10 @@ public class Lexer {
 				}
 				if (!(c >= 'A' && c <= 'Z') && !(c >= 'a' && c <= 'z')
 						&& !(c == '_') && !(c >= '0' && c <= '9')) {
-			    	this.fstream.reset();
-			    } else {
-			    	token.lexeme += (char) c;
-			    }
+					this.fstream.reset();
+				} else {
+					token.lexeme += (char) c;
+				}
 				return returnback(c);
 			case 'v':
 				str = "oid";
@@ -260,7 +272,7 @@ public class Lexer {
 		case '&':
 			c = this.fstream.read();
 			if (c == '&') {
-				return new Token(Kind.TOKEN_BOOLEAN, token.lineNum);
+				return new Token(Kind.TOKEN_AND, token.lineNum);
 			}
 		case '=':
 			return new Token(Kind.TOKEN_ASSIGN, token.lineNum);
@@ -301,38 +313,39 @@ public class Lexer {
 			// is not that much and may be less than 50 lines. If you
 			// find you are writing a lot of code, you
 			// are on the wrong way.
-			System.out.format("debug: current is '%s', next is '%s'\n", (char)c, (char)this.fstream.read());
+			System.out.format("debug: current is '%s', next is '%s'\n",
+					(char) c, (char) this.fstream.read());
 			new Todo();
 			return null;
 		}
 	}
-	public Token returnback(int c) throws Exception{
+
+	public Token returnback(int c) throws Exception {
 		while (true) {
 			this.fstream.mark(1);
 			c = this.fstream.read();
-			if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')
-					|| (c == '_') || (c >= '0' && c <= '9')) {
+			if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c == '_')
+					|| (c >= '0' && c <= '9')) {
 				token.lexeme += (char) c;
 			} else {
 				this.fstream.reset();
-				return new Token(Kind.TOKEN_ID, token.lineNum,
-						token.lexeme);
+				return new Token(Kind.TOKEN_ID, token.lineNum, token.lexeme);
 			}
 		}
 	}
 
 	public boolean Comparing(String str, int c) {
 		int index = 0;
-		
+
 		while (b && index <= str.length()) {
 			try {
 				this.fstream.mark(1);
-				c = this.fstream.read();				
+				c = this.fstream.read();
 				if (index == str.length()) {
 					if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')
 							|| (c == '_') || (c >= '0' && c <= '9')) {
 						this.fstream.reset();
-						b =false;
+						b = false;
 						return b;
 					}
 					this.fstream.reset();
@@ -351,7 +364,7 @@ public class Lexer {
 					this.fstream.reset();
 					return b;
 				}
-				
+
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
