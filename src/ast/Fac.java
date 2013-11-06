@@ -83,7 +83,7 @@ public class Fac {
 									new ast.exp.Add(new ast.exp.Id("sum"),
 											new ast.exp.Id("i"))))),
 					new ast.exp.Id("sum"))));
-	
+
 	public static ast.program.Program prog1 = new ast.program.Program(summ,
 			new util.Flist<ast.classs.T>().addAll(doitt));
 
