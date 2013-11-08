@@ -3,6 +3,7 @@ package ast;
 public class PrettyPrintVisitor implements Visitor
 {
   private int indentLevel;
+  private int flag = 0;
 
   public PrettyPrintVisitor()
   {
@@ -116,9 +117,9 @@ public class PrettyPrintVisitor implements Visitor
   @Override
   public void visit(ast.exp.NewIntArray e)
   {
-	  this.say("new ");
+	  this.say("new int [");
 	  e.exp.accept(this);
-	  this.say("()");
+	  this.say("]");
 	  return;
   }
 
@@ -200,12 +201,16 @@ public class PrettyPrintVisitor implements Visitor
   @Override
   public void visit(ast.stm.Block s)
   {
+	  this.unIndent();
 	  this.printSpaces();
-	  this.say("{");
+	  this.sayln("{");
+	  this.indent();
 	  for (ast.stm.T st : s.stms) {
 		  st.accept(this);
 	  }
-	  this.say("}");
+	 // this.unIndent();
+	  this.printSpaces();
+	  this.sayln("}");
 	  return;	  
   }
 
@@ -219,12 +224,10 @@ public class PrettyPrintVisitor implements Visitor
     this.indent();
     s.thenn.accept(this);
     this.unIndent();
-    this.sayln("");
     this.printSpaces();
     this.sayln("else");
     this.indent();
     s.elsee.accept(this);
-    this.sayln("");
     this.unIndent();
     return;
   }
@@ -249,9 +252,7 @@ public class PrettyPrintVisitor implements Visitor
 	  this.indent();
 	  s.body.accept(this);
 	  this.unIndent();
-	  this.sayln("");
-	  return;
-	  
+	  return;	  
   }
 
   // type
