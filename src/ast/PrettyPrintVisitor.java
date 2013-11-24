@@ -3,7 +3,7 @@ package ast;
 public class PrettyPrintVisitor implements Visitor
 {
   private int indentLevel;
-  private int flag = 0;
+ // private int flag = 0;
 
   public PrettyPrintVisitor()
   {
@@ -201,14 +201,14 @@ public class PrettyPrintVisitor implements Visitor
   @Override
   public void visit(ast.stm.Block s)
   {
-	  this.unIndent();
+	  // this.unIndent();
 	  this.printSpaces();
 	  this.sayln("{");
 	  this.indent();
 	  for (ast.stm.T st : s.stms) {
 		  st.accept(this);
 	  }
-	 // this.unIndent();
+	  this.unIndent();
 	  this.printSpaces();
 	  this.sayln("}");
 	  return;	  
