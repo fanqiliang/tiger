@@ -14,6 +14,9 @@ public class Call extends T
     this.exp = exp;
     this.id = id;
     this.args = args;
+    this.type = null;
+    this.at = null;
+    this.rt = null;
   }
 
   @Override

@@ -1,5 +1,7 @@
 package elaborator;
 
+import java.util.LinkedList;
+
 public class ElaboratorVisitor implements ast.Visitor {
 	public ClassTable classTable; // symbol table for class
 	public MethodTable methodTable; // symbol table for each method
@@ -68,12 +70,17 @@ public class ElaboratorVisitor implements ast.Visitor {
 		} else
 			error("Call leftty is error,leftty's type is " + leftty);
 		MethodType mty = this.classTable.getm(ty.id, e.id);
+		java.util.LinkedList<ast.type.T> deArgsType = new LinkedList<ast.type.T>();
+		for (ast.dec.T decs : mty.argsType) {
+			ast.dec.Dec dec = (ast.dec.Dec)decs;
+			deArgsType.add(dec.type);
+		}
 		java.util.LinkedList<ast.type.T> argsty = new java.util.LinkedList<ast.type.T>();
 		for (ast.exp.T a : e.args) {
 			a.accept(this);
 			argsty.addLast(this.type);
 		}
-		if (mty.argsType.size() != argsty.size())
+		if (deArgsType.size() != argsty.size())
 			error("Call argsType is error");
 		for (int i = 0; i < argsty.size(); i++) {
 			ast.dec.Dec dec = (ast.dec.Dec) mty.argsType.get(i);
@@ -101,7 +108,7 @@ public class ElaboratorVisitor implements ast.Visitor {
 			}
 		}
 		this.type = mty.retType;
-		e.at = argsty;
+		e.at = deArgsType;
 		e.rt = this.type;
 		return;
 	}
