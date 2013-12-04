@@ -55,16 +55,29 @@ public class PrettyPrintVisitor implements Visitor
   @Override
   public void visit(codegen.C.exp.Add e)
   {
+	  e.left.accept(this);
+	  this.say(" + ");
+	  e.right.accept(this);
+	  return;
   }
 
   @Override
   public void visit(codegen.C.exp.And e)
   {
+	  e.left.accept(this);
+	  this.say(" && ");
+	  e.right.accept(this);
+	  return;
   }
 
   @Override
   public void visit(codegen.C.exp.ArraySelect e)
   {
+	  e.array.accept(this);
+	  this.say("[");
+	  e.index.accept(this);
+	  this.say("]");
+	  return;
   }
 
   @Override
@@ -91,11 +104,16 @@ public class PrettyPrintVisitor implements Visitor
   public void visit(codegen.C.exp.Id e)
   {
     this.say(e.id);
+    return;
   }
 
   @Override
   public void visit(codegen.C.exp.Length e)
   {
+	  this.say("strlen(");
+	  e.array.accept(this);
+	  this.say(")");
+	  return;
   }
 
   @Override
@@ -110,6 +128,10 @@ public class PrettyPrintVisitor implements Visitor
   @Override
   public void visit(codegen.C.exp.NewIntArray e)
   {
+	  this.say("int [");
+	  e.exp.accept(this);
+	  this.say("]");
+	  return;
   }
 
   @Override
@@ -123,6 +145,8 @@ public class PrettyPrintVisitor implements Visitor
   @Override
   public void visit(codegen.C.exp.Not e)
   {
+	  this.say("!");
+	  return;
   }
 
   @Override
@@ -145,6 +169,7 @@ public class PrettyPrintVisitor implements Visitor
   public void visit(codegen.C.exp.This e)
   {
     this.say("this");
+    return;
   }
 
   @Override
@@ -163,18 +188,34 @@ public class PrettyPrintVisitor implements Visitor
     this.printSpaces();
     this.say(s.id + " = ");
     s.exp.accept(this);
-    this.say(";");
+    this.sayln(";");
     return;
   }
 
   @Override
   public void visit(codegen.C.stm.AssignArray s)
   {
+	  this.printSpaces();
+	  this.say(s.id + "[");
+	  s.index.accept(this);
+	  this.say("] = ");
+	  s.exp.accept(this);
+	  this.sayln(";");
+	  return;
   }
 
   @Override
   public void visit(codegen.C.stm.Block s)
   {
+	  this.printSpaces();
+	  this.say("{");
+	  this.indent();
+	  for (codegen.C.stm.T stms : s.stms) {
+		  stms.accept(this);
+	  }
+	  this.unIndent();
+	  this.sayln("}");
+	  return;
   }
 
   @Override
@@ -210,6 +251,15 @@ public class PrettyPrintVisitor implements Visitor
   @Override
   public void visit(codegen.C.stm.While s)
   {
+	  this.printSpaces();
+	  this.say("while (");
+	  s.condition.accept(this);
+	  this.sayln(")");
+	  this.indent();
+	  s.body.accept(this);
+	  this.unIndent();
+	  this.sayln("");
+	  return;
   }
 
   // type
@@ -228,12 +278,16 @@ public class PrettyPrintVisitor implements Visitor
   @Override
   public void visit(codegen.C.type.IntArray t)
   {
+	  this.say("int []");
   }
 
   // dec
   @Override
   public void visit(codegen.C.dec.Dec d)
   {
+	  d.type.accept(this);
+	  this.sayln(d.id+";");
+	  return;
   }
 
   // method
